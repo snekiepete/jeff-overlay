@@ -1,0 +1,11 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Subject: [PATCH 2/2] Makefile.am: guard themer subdir with AM_CONDITIONAL
+
+--- a/Makefile.am
++++ b/Makefile.am
+@@
+-SUBDIRS = libengine engines src po themer
++SUBDIRS = libengine engines src po
++if THEMER
++SUBDIRS += themer
++endif

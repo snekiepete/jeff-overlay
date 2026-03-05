@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Subject: [PATCH 1/2] configure: add --disable-themer and guard gtkmm checks
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,6 +1,16 @@
+ AC_INIT([emerald],[0.9.7],[p12tic])
+ AM_INIT_AUTOMAKE([foreign subdir-objects])
+ 
++# Allow building without the GTKmm-based theme manager
++AC_ARG_ENABLE([themer],
++  AS_HELP_STRING([--disable-themer],[Disable GTKmm-based theme manager]),
++  [], [enable_themer=yes])
++AM_CONDITIONAL([THEMER],[test "x$enable_themer" = "xyes"])
++
++# Existing pkg-config checks for core libs stay as-is; gtkmm bits guarded:
++
+@@
+-# GTKMM / WNCKMM checks (originally unconditional)
+-PKG_CHECK_MODULES([GTKMM],[gtkmm-2.4 >= 2.8.0 wnckmm-1.0],[],[
+-  AC_MSG_ERROR([gtkmm/wnckmm not found])
+-])
++if test "x$enable_themer" = "xyes"; then
++  PKG_CHECK_MODULES([GTKMM],[gtkmm-2.4 >= 2.8.0 wnckmm-1.0],[],[
++    AC_MSG_ERROR([gtkmm/wnckmm not found])
++  ])
++fi
+@@
+-AC_CONFIG_FILES([Makefile
+-                 themer/Makefile
+-                 src/Makefile
+-                 libengine/Makefile
+-                 engines/Makefile
+-                 po/Makefile.in])
++AC_CONFIG_FILES([Makefile
++                 src/Makefile
++                 libengine/Makefile
++                 engines/Makefile
++                 po/Makefile.in])
++if test "x$enable_themer" = "xyes"; then
++  AC_CONFIG_FILES([themer/Makefile])
++fi

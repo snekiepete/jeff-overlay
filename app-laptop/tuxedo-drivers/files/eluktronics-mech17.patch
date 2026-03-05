@@ -1,0 +1,41 @@
+--- a/src/tuxedo_keyboard.c
++++ b/src/tuxedo_keyboard.c
+@@ -23,12 +23,41 @@
+ #include "uniwill_keyboard.h"
+ #include "tuxedo_compatibility_check/tuxedo_compatibility_check.h"
+ #include <linux/mutex.h>
++#include <linux/dmi.h>
+ #include <asm/cpu_device_id.h>
+ #include <asm/intel-family.h>
+ #include <linux/mod_devicetable.h>
+ 
+ MODULE_AUTHOR("TUXEDO Computers GmbH <tux@tuxedocomputers.com>");
+ MODULE_DESCRIPTION("TUXEDO Computers keyboard & keyboard backlight Driver");
+ MODULE_LICENSE("GPL");
+ 
++/*
++ * Allow running on ELUKTRONICS MECH-17 (Clevo/Uniwill + Prema BIOS).
++ *
++ * Observed DMI:
++ *   sys_vendor   = "ELUKTRONICS"
++ *   product_name = "MECH-17"
++ *   board_name   = "MECH-17 powered by premamod.com"
++ */
++static const struct dmi_system_id eluktronics_mech17_dmi[] __initconst = {
++	{
++		.ident = "ELUKTRONICS MECH-17",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ELUKTRONICS"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "MECH-17"),
++		},
++	},
++	{
++		.ident = "ELUKTRONICS MECH-17 (Prema board name)",
++		.matches = {
++			DMI_MATCH(DMI_BOARD_NAME, "MECH-17 powered by premamod.com"),
++		},
++	},
++	{ }
++};
++
+ static DEFINE_MUTEX(tuxedo_keyboard_init_driver_lock);
