@@ -1,0 +1,12 @@
+diff --git a/weather/src/applet-config.c b/weather/src/applet-config.c
+index db3d4a2..423e6a6 100755
+--- a/weather/src/applet-config.c
++++ b/weather/src/applet-config.c
+@@ -23,6 +23,7 @@
+ #include "applet-struct.h"
+ #include "applet-read-data.h"
+ #include "applet-config.h"
++#include <math.h>
+ 
+ GList *s_pLocationsList = NULL;
+ 

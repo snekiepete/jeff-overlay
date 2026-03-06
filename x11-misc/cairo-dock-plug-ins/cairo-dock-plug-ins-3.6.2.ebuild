@@ -16,6 +16,10 @@ KEYWORDS="~amd64 ~x86"
 
 IUSE="alsa ical gmenu gnome impulse indicator dbusmenu python"
 
+PATCHES=(
+  "${FILESDIR}/${P}-weather-math-h.patch"
+)
+
 DEPEND="
 	>=x11-misc/cairo-dock-core-3.6.0
 	>=dev-libs/glib-2.36:2

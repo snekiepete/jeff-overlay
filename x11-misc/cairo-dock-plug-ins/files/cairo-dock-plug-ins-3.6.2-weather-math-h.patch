@@ -1,0 +1,33 @@
+diff --git a/weather/src/applet-config.c b/weather/src/applet-config.c
+--- a/weather/src/applet-config.c
++++ b/weather/src/applet-config.c
+@@ -18,6 +18,7 @@
+ 
+ #include <string.h>
+ #include <glib/gstdio.h>
++#include <math.h>
+ 
+ #include "applet-struct.h"
+ #include "applet-read-data.h"
+diff --git a/weather/src/applet-read-data.c b/weather/src/applet-read-data.c
+--- a/weather/src/applet-read-data.c
++++ b/weather/src/applet-read-data.c
+@@ -21,6 +21,7 @@
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <stdlib.h>  // rand
++#include <math.h>
+ 
+ #include <json.h>
+ #include <glib/gstdio.h>
+diff --git a/weather/src/applet-load-icons.c b/weather/src/applet-load-icons.c
+--- a/weather/src/applet-load-icons.c
++++ b/weather/src/applet-load-icons.c
+@@ -18,6 +18,7 @@
+ 
+ #include <string.h>
++#include <math.h>
+ 
+ #include "applet-struct.h"
+ #include "applet-read-data.h"
+ #include "applet-load-icons.h"
