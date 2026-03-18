@@ -1,61 +1,53 @@
-# Distributed under the terms of the GNU General Public License v2
 EAPI=8
 
-inherit autotools git-r3 flag-o-matic
+inherit autotools git-r3
 
-DESCRIPTION="Emerald - Compiz 0.8 window decorator (Compiz Reloaded fork)"
-HOMEPAGE="https://github.com/compiz-reloaded/emerald"
-EGIT_REPO_URI="https://github.com/compiz-reloaded/emerald.git"
+DESCRIPTION="Emerald window decorator for Compiz"
+HOMEPAGE="https://github.com/snekiepete/emerald"
+EGIT_REPO_URI="https://github.com/snekiepete/emerald.git"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS=""
-IUSE="nls themer"
+IUSE="gtk3"
 
+RDEPEND="
+	x11-wm/compiz
+	x11-libs/libX11
+	x11-libs/libXcomposite
+	x11-libs/libXdamage
+	x11-libs/libXfixes
+	x11-libs/libXrender
+	x11-libs/libwnck:3
+	x11-libs/startup-notification
+	dev-libs/glib:2
+	gtk3? ( x11-libs/gtk+:3 )
+	!gtk3? ( x11-libs/gtk+:2 )
+"
+DEPEND="${RDEPEND}"
 BDEPEND="
 	virtual/pkgconfig
 	sys-devel/gettext
-	dev-util/intltool
+	dev-build/autoconf
+	dev-build/automake
+	dev-build/libtool
 "
-
-RDEPEND="
-	dev-libs/glib:2
-	x11-libs/cairo
-	x11-libs/pango
-	x11-libs/gdk-pixbuf:2
-	x11-libs/gtk+:2
-	x11-libs/libXrender
-	x11-wm/compiz
-	themer? (
-		dev-cpp/gtkmm:2.4
-		x11-libs/libwnck:1
-		dev-cpp/libwnckmm:1
-	)
-"
-
-DEPEND="${RDEPEND}"
 
 src_prepare() {
 	default
-	# Make old code happy on new compilers without turning warnings into errors
-	sed -i -e 's/-Werror//g' configure.ac Makefile.am */Makefile.am 2>/dev/null || :
-	# Regenerate build system
 	eautoreconf
 }
 
 src_configure() {
-	local myeconf=()
-	use nls    || myeconf+=( --disable-nls )
-	use themer || myeconf+=( --disable-themer )
-
-	# GTK2/gtkmm-2.x-era code compiles most smoothly with gnu++11 + relaxed warnings
-	append-cxxflags -std=gnu++11 -Wno-deprecated-declarations -Wno-deprecated-copy -fpermissive
-
-	econf "${myeconf[@]}" --disable-static
+	econf \
+		$(use_enable gtk3)
 }
 
 src_install() {
 	default
-	find "${ED}" -name '*.la' -delete || die
-	dodoc AUTHORS ChangeLog NEWS README || :
+
+	local d
+	for d in AUTHORS NEWS README README.md; do
+		[[ -f ${d} ]] && dodoc "${d}"
+	done
 }
