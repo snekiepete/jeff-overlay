@@ -3,20 +3,20 @@
 
 EAPI=8
 
-inherit cmake xdg
+inherit cmake git-r3 xdg
 
 DESCRIPTION="Official plug-ins for Cairo-Dock"
 HOMEPAGE="https://github.com/Cairo-Dock/cairo-dock-plug-ins"
-SRC_URI="https://github.com/Cairo-Dock/cairo-dock-plug-ins/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
+EGIT_REPO_URI="https://github.com/Cairo-Dock/cairo-dock-plug-ins.git"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS=""
 
 IUSE="alsa dbus gmenu mail networkmanager terminal weather webkit xfce"
 
 RDEPEND="
-	~x11-misc/cairo-dock-core-${PV}
+	x11-misc/cairo-dock-core
 	dev-libs/glib:2
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf:2
@@ -47,7 +47,6 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 
 BDEPEND="
-	dev-build/cmake
 	sys-devel/gettext
 	virtual/pkgconfig
 "
@@ -55,21 +54,24 @@ BDEPEND="
 src_prepare() {
 	cmake_src_prepare
 
-	# cairo-dock-plug-ins-3.6.2 weather plug-in can fail on NAN without math.h.
-	if [[ -f weather/src/applet-config.c ]] &&
-		! grep -q '#include <math.h>' weather/src/applet-config.c ; then
-		sed -i '1i#include <math.h>' weather/src/applet-config.c || die
-	fi
+	local f
+
+	for f in \
+		weather/src/applet-config.c \
+		weather/src/applet-read-data.c \
+		weather/src/applet-load-icons.c
+	do
+		if [[ -f ${f} ]] && ! grep -q '#include <math.h>' "${f}" ; then
+			sed -i '1i#include <math.h>' "${f}" || die
+		fi
+	done
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=Release
 
-		# This replaces upstream's manual-build:
-		# -DCMAKE_PREFIX_PATH=/usr/local
-		#
-		# In Gentoo, cairo-dock-core is Portage-managed under /usr.
+		# Plug-ins need to find the Portage-installed cairo-dock-core.
 		-DCMAKE_PREFIX_PATH="${EPREFIX}/usr"
 
 		-Denable-alsaMixer=$(usex alsa True False)

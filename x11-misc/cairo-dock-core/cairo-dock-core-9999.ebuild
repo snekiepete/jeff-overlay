@@ -3,15 +3,15 @@
 
 EAPI=8
 
-inherit cmake xdg
+inherit cmake git-r3 xdg
 
 DESCRIPTION="Light and eye-candy dock to launch programs easily"
 HOMEPAGE="https://github.com/Cairo-Dock/cairo-dock-core"
-SRC_URI="https://github.com/Cairo-Dock/cairo-dock-core/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
+EGIT_REPO_URI="https://github.com/Cairo-Dock/cairo-dock-core.git"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS=""
 
 IUSE="debug egl glx gnome gtk-layer-shell systemd wayland wayland-protocols X"
 
@@ -24,6 +24,7 @@ REQUIRED_USE="
 
 RDEPEND="
 	dev-libs/glib:2
+	dev-libs/wayland
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf:2
 	x11-libs/gtk+:3
@@ -52,7 +53,6 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 
 BDEPEND="
-	dev-build/cmake
 	virtual/pkgconfig
 "
 
